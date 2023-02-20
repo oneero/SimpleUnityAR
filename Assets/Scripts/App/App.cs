@@ -1,37 +1,25 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace Oneeronaut
 {
     /**
-     * IAppEngineBridge interface can be implemented to run the application logic in a different engine.
+     * Convenience class for constructing the AppController and AppModel instances.
      */
-    public interface IAppEngineBridge
-    {
-        public event EventHandler<PositionChangedEventArgs> OnCameraPositionChanged;
-        public event EventHandler<GUIActionEventArgs> OnPlaceObjectGUIActivated;
-        public void HandlePlacedObjectLabelUpdate(object sender, GUILabelUpdateEventArgs eventArgs);
-    }
-
     public class AppFactory
     {
-        private IAppModel model;
-        private IAppView view;
         public IAppController Controller { get; }
 
-        public AppFactory(IAppEngineBridge engineBridge)
+        public AppFactory(IAppView view)
         {
             // Create model
-            model = new AppModel();
+            IAppModel model = new AppModel<PositionObject>();
 
-            // Create view
-            view = new AppView();
-            
             // Create controller
             Controller = new AppController(model, view);
-            Controller.SubscribeEngineEvents(engineBridge);
 
+            // Connect controller with model
+            Controller.SubscribeToModelEvents();
+            
+            // Connect controller with view
+            Controller.SubscribeToViewEvents();
         }
     }
 }

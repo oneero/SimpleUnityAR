@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using SVector3 = System.Numerics.Vector3;
 
 namespace Oneeronaut
@@ -17,6 +15,7 @@ namespace Oneeronaut
     {
         event EventHandler<PositionChangedEventArgs> OnPositionChanged;
         SVector3 Position { get; set; }
+        float DistanceTo(SVector3 target);
     }
     
     /**
@@ -40,6 +39,21 @@ namespace Oneeronaut
         }
 
         private SVector3 position;
+
+        public PositionObject()
+        {
+            Position = SVector3.Zero;
+        }
+
+        public PositionObject(SVector3 position)
+        {
+            Position = position;
+        }
+
+        public float DistanceTo(SVector3 target)
+        {
+            return SVector3.Distance(position, target);
+        }
     }
 
 }

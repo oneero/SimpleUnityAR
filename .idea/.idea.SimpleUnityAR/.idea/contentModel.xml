@@ -10,10 +10,9 @@
             <e p="App.cs" t="Include" />
             <e p="AppController.cs" t="Include" />
             <e p="AppModel.cs" t="Include" />
-            <e p="AppView.cs" t="Include" />
             <e p="PositionObject.cs" t="Include" />
+            <e p="UnityView.cs" t="Include" />
           </e>
-          <e p="UnityBridge.cs" t="Include" />
           <e p="Util" t="Include">
             <e p="TypeExtensions.cs" t="Include" />
           </e>
