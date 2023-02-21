@@ -1,17 +1,25 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 using SVector3 = System.Numerics.Vector3;
 
 namespace Oneeronaut
 {
     public class DistanceToUserUpdateEventArgs : EventArgs
     {
+        public int Index;
         public float Distance;
+    }
+
+    public class ObjectAddedEventArgs : EventArgs
+    {
+        public SVector3 Position;
     }
     
     public interface IAppModel
     {
         public event EventHandler<DistanceToUserUpdateEventArgs> OnDistanceToUserUpdate;
-        public event EventHandler<PositionChangedEventArgs> OnObjectPositionUpdate;
+        public event EventHandler<ObjectAddedEventArgs> OnObjectAdded;
         public void UpdateUserPosition(SVector3 position);
         public void PlaceObject(SVector3 position);
     }
@@ -21,50 +29,52 @@ namespace Oneeronaut
      * It implements the IAppModel interface and uses generics for the data types.
      * This allows easier alternative implementations for the positional data class.
      */
-    public class AppModel<TP> : IAppModel
-        where TP : class, IPositioned, new()
+    public class AppModel<T> : IAppModel
+        where T : class, IPositioned, new()
     {
         public event EventHandler<DistanceToUserUpdateEventArgs> OnDistanceToUserUpdate;
-        public event EventHandler<PositionChangedEventArgs> OnObjectPositionUpdate;
-        private TP User { get; set; }
-        private TP PlacedObject { get; set; }
+        public event EventHandler<ObjectAddedEventArgs> OnObjectAdded;
+        private T User { get; set; }
+        private List<T> PlacedObjects { get; set; }
 
         public AppModel()
         {
-            User = new TP { Position = SVector3.Zero };
+            User = new T { Position = SVector3.Zero };
             User.OnPositionChanged += HandleUserPositionChanged;
-            PlacedObject = null;
+            PlacedObjects = new List<T>();
         }
 
         public void PlaceObject(SVector3 position)
         {
-            PlacedObject = new TP { Position = SVector3.Zero };
-            PlacedObject.OnPositionChanged += HandleObjectPositionChanged;
-        }
-
-        // Handle position change events from user
-        private void HandleUserPositionChanged(object sender, PositionChangedEventArgs eventArgs)
-        {
-            // We can ignore user position changes if no object has been placed
-            if (PlacedObject == null) return;
+            Debug.Log($"M: PlaceObject; {PlacedObjects.Count}");
             
-            DistanceToUserUpdateEventArgs args = new DistanceToUserUpdateEventArgs();
-            args.Distance = User.DistanceTo(eventArgs.NewPosition);
-            OnDistanceToUserUpdate?.Invoke(this, args);
-        }
-        
-        // Handle position change of the placed object
-        private void HandleObjectPositionChanged(object sender, PositionChangedEventArgs eventArgs)
-        {
-            PositionChangedEventArgs args = new PositionChangedEventArgs();
-            args.NewPosition = eventArgs.NewPosition;
-            OnObjectPositionUpdate?.Invoke(this, args);
+            T placedObject = new T { Position = position };
+            PlacedObjects.Add(placedObject);
+            
+            ObjectAddedEventArgs args = new ObjectAddedEventArgs();
+            args.Position = position;
+            OnObjectAdded?.Invoke(this, args);
         }
 
         // Handle camera position change events from controller
         public void UpdateUserPosition(SVector3 position)
         {
+            // Update the user data
             User.Position = position;
+        }
+        
+        // Handle position change events from user data
+        private void HandleUserPositionChanged(object sender, PositionChangedEventArgs eventArgs)
+        {
+            // todo: iterate placed objects
+            for (int i = 0; i < PlacedObjects.Count; i++)
+            {
+                DistanceToUserUpdateEventArgs args = new DistanceToUserUpdateEventArgs();
+                args.Distance = PlacedObjects[i].DistanceTo(eventArgs.NewPosition);
+                args.Index = i;
+                Debug.Log($"M: User position change; {args.Index}, {args.Distance}");
+                OnDistanceToUserUpdate?.Invoke(this, args);
+            }
         }
     }
     

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using Random = UnityEngine.Random;
 
 namespace Oneeronaut
 {
@@ -15,7 +16,7 @@ namespace Oneeronaut
     {
         public event EventHandler<PositionChangedEventArgs> OnCameraPositionChanged;
         public event EventHandler<RaycastHitEventArgs> OnRaycastHit;
-        public void UpdateDistanceGUI(float distance);
+        public void UpdateDistanceGUI(int index, float distance);
         public void PlaceVisObject(SVector3 position);
     }
 
@@ -38,16 +39,15 @@ namespace Oneeronaut
         
         [SerializeField]                 
         private Button placeObjectButton;
-
-        [SerializeField]
-        private Text userDistanceLabel;
-
+        
         [SerializeField]
         private GameObject visObjectPrefab;
         
         private Camera unityCamera;
         private Vector3 unityCameraWorldPosition;
-        private GameObject visObject;
+
+        private List<ObjectGUI> objectGUIs = new List<ObjectGUI>();
+        
         private ARRaycastManager raycastManager;
         private List<ARRaycastHit> raycastHits = new List<ARRaycastHit>();
 
@@ -66,12 +66,6 @@ namespace Oneeronaut
             if (!raycastManager)
             {
                 AbortWithError("Could not find ARRaycastManager");
-                return;
-            }
-
-            if (!userDistanceLabel)
-            {
-                AbortWithError("User distance label not assigned.");
                 return;
             }
 
@@ -107,21 +101,47 @@ namespace Oneeronaut
             }
         }
         
-        public void UpdateDistanceGUI(float distance)
+        public void UpdateDistanceGUI(int index, float distance)
         {
-            userDistanceLabel.text = $"{distance}";
+            Debug.Log($"V: UpdateDistanceGUI; {index}, {distance}");
+            if (index >= objectGUIs.Count)
+            {
+                Debug.LogError("Index out of range while updating GUI.");
+                return;
+            }
+            
+            objectGUIs[index].Label.text = $"{distance:F2}";
+            objectGUIs[index].Canvas.transform.rotation =
+                Quaternion.LookRotation(objectGUIs[index].Canvas.transform.position - unityCamera.transform.position);
         }
-
+        
         public void PlaceVisObject(SVector3 position)
         {
+            Debug.Log("V: PlaceVisObject");
             Vector3 pos = position.ToUnity();
             
-            if (!visObject)
+            // Prefab
+            GameObject go = Instantiate(visObjectPrefab, pos, Quaternion.identity);
+            
+            // GUI
+            ObjectGUI gui = new ObjectGUI();
+            gui.Label = go.GetComponentInChildren<Text>();
+            gui.Canvas = go.GetComponentInChildren<Canvas>();
+            if (!gui.Label || !gui.Canvas)
             {
-                visObject = Instantiate(visObjectPrefab, pos, Quaternion.identity);
+                Debug.LogError("Could not find Text or Canvas component on instantiated VisObject.");
+                return;
             }
+            objectGUIs.Add(gui);
+        }
 
-            visObject.transform.position = pos;
+        [ContextMenu("FakeRaycastHit")]
+        public void FakeRaycastHit()
+        {
+            Vector3 rnd = Random.insideUnitSphere;
+            RaycastHitEventArgs args = new RaycastHitEventArgs();
+            args.PlacementPosition = rnd.ToSystem();
+            OnRaycastHit?.Invoke(this, args);
         }
         
         private void HandleAddObjectButtonClick()
@@ -146,6 +166,15 @@ namespace Oneeronaut
     public class RaycastHitEventArgs : EventArgs
     {
         public SVector3 PlacementPosition;
+    }
+
+    /**
+     * Convenience struct for holding references to Canvas and Text components.
+     */
+    public struct ObjectGUI
+    {
+        public Text Label;
+        public Canvas Canvas;
     }
 }
 

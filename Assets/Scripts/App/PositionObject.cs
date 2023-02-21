@@ -34,6 +34,7 @@ namespace Oneeronaut
                 position = value;
                     
                 PositionChangedEventArgs args = new PositionChangedEventArgs();
+                args.NewPosition = position;
                 OnPositionChanged?.Invoke(this, args);
             }
         }

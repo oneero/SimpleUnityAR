@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using SVector3 = System.Numerics.Vector3;
 
 namespace Oneeronaut
@@ -39,23 +40,26 @@ namespace Oneeronaut
 
         private void HandleRaycastHit(object sender, RaycastHitEventArgs eventArgs)
         {
+            Debug.Log("C: HandleRaycastHit");
             model.PlaceObject(eventArgs.PlacementPosition);
         }
 
         public void SubscribeToModelEvents()
         {
             model.OnDistanceToUserUpdate += HandleDistanceToUserUpdate;
-            model.OnObjectPositionUpdate += HandleObjectPositionChanged;
+            model.OnObjectAdded += HandleObjectAdded;
         }
         
         private void HandleDistanceToUserUpdate(object sender, DistanceToUserUpdateEventArgs eventArgs)
         {
-            view.UpdateDistanceGUI(eventArgs.Distance);
+            Debug.Log($"C: HandleDistanceToUserUpdate; {eventArgs.Index}, {eventArgs.Distance}");
+            view.UpdateDistanceGUI(eventArgs.Index, eventArgs.Distance);
         }
-
-        private void HandleObjectPositionChanged(object sender, PositionChangedEventArgs eventArgs)
+        
+        private void HandleObjectAdded(object sender, ObjectAddedEventArgs eventArgs)
         {
-            view.PlaceVisObject(eventArgs.NewPosition);
+            Debug.Log("C: HandleObjectAdded");
+            view.PlaceVisObject(eventArgs.Position);
         }
     }
     
