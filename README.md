@@ -15,6 +15,15 @@ The project uses AR Foundation and AR Kit version 4.2.7 packages.
 - Built for iOS with XCode 14.2.
 - Tested on iPhone 11 Pro Max with iOS 16.2.
 
+### Building and testing
+1. Open the project in Unity 2021.3.18.
+2. Check File > Build Settings to make sure iOS is selected.
+3. Build and Run will then produce and open an XCode project. 
+
+To build and test the app on your iOS device, you will need to configure signing in XCode. You can read more about the process [here](https://learn.unity.com/tutorial/publishing-for-ios#).
+
+Building for Android requires installing and configuring the AR Core package in the Unity package manager. This has not been tested.
+
 ## Application structure
 
 The overall structure of the project follows the MVC pattern:
@@ -24,11 +33,9 @@ The overall structure of the project follows the MVC pattern:
 
 - A controller subscribes to events from both the model and the view and calls appropriate methods to enable communication between the two.
 
-## Details
+### Details
 
- The view functions as a bridge between the engine and other parts of the application. It is the only Unity-dependent part as well as the only MonoBehaviour in the project. 
+The view functions as a bridge between the engine and other parts of the application. It is the only Unity-dependent part as well as the only MonoBehaviour in the project. Creating an alternative implementation with the IAppView interface allows porting the application to other engines.
 
-Alternative implementations for all parts, including the view, can be created by implementing the relevant interface. This enables easy porting to other engines.
-
-The model is also generic, which allows changing the implementation of the data type used for holding position information.
+All parts of the application have corresponding interfaces that can be used to construct differing implementations. The model is also generic, which allows changing the implementation of the data type used for holding position information.
 
