@@ -1,21 +1,12 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using SVector3 = System.Numerics.Vector3;
 
 namespace Oneeronaut
 {
-    public class DistanceToUserUpdateEventArgs : EventArgs
-    {
-        public int Index;
-        public float Distance;
-    }
-
-    public class ObjectAddedEventArgs : EventArgs
-    {
-        public SVector3 Position;
-    }
-    
+    /**
+     * Interface for App Models.
+     */
     public interface IAppModel
     {
         public event EventHandler<DistanceToUserUpdateEventArgs> OnDistanceToUserUpdate;
@@ -26,28 +17,36 @@ namespace Oneeronaut
     
     /**
      * The AppModel class servers as a container for the application data.
-     * It implements the IAppModel interface and uses generics for the data types.
-     * This allows easier alternative implementations for the positional data class.
+     * It implements the IAppModel interface and uses generics for the position data types.
+     * The interface and generics enable easier alternative implementations.
      */
     public class AppModel<T> : IAppModel
         where T : class, IPositioned, new()
     {
+        // Events
         public event EventHandler<DistanceToUserUpdateEventArgs> OnDistanceToUserUpdate;
         public event EventHandler<ObjectAddedEventArgs> OnObjectAdded;
+        
+        // Data
         private T User { get; set; }
         private List<T> PlacedObjects { get; set; }
 
         public AppModel()
         {
+            // Create User and subscribe to position change events
             User = new T { Position = SVector3.Zero };
             User.OnPositionChanged += HandleUserPositionChanged;
+            
+            // Initialize place objects list
             PlacedObjects = new List<T>();
         }
 
+        /**
+         * Create new placed object and report back with an event.
+         * This is called by the Controller.
+         */
         public void PlaceObject(SVector3 position)
         {
-            Debug.Log($"M: PlaceObject; {PlacedObjects.Count}");
-            
             T placedObject = new T { Position = position };
             PlacedObjects.Add(placedObject);
             
@@ -55,24 +54,27 @@ namespace Oneeronaut
             args.Position = position;
             OnObjectAdded?.Invoke(this, args);
         }
-
-        // Handle camera position change events from controller
+        
+        /*
+         * The Controller will call this to update the User position.
+         */
         public void UpdateUserPosition(SVector3 position)
         {
-            // Update the user data
             User.Position = position;
         }
         
-        // Handle position change events from user data
+        /*
+         * The User position data class will report position changes with events and
+         * this method will handle those. It will iterate all placed objects and fire
+         * events with calculated distances and indices as arguments.
+         */
         private void HandleUserPositionChanged(object sender, PositionChangedEventArgs eventArgs)
         {
-            // todo: iterate placed objects
             for (int i = 0; i < PlacedObjects.Count; i++)
             {
                 DistanceToUserUpdateEventArgs args = new DistanceToUserUpdateEventArgs();
                 args.Distance = PlacedObjects[i].DistanceTo(eventArgs.NewPosition);
                 args.Index = i;
-                Debug.Log($"M: User position change; {args.Index}, {args.Distance}");
                 OnDistanceToUserUpdate?.Invoke(this, args);
             }
         }

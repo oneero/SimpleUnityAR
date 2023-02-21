@@ -5,21 +5,21 @@ namespace Oneeronaut
      */
     public class AppFactory
     {
-        public IAppController Controller { get; }
+        private IAppController controller;
 
         public AppFactory(IAppView view)
         {
-            // Create model
+            // Create model with PositionObject as the data type
             IAppModel model = new AppModel<PositionObject>();
 
             // Create controller
-            Controller = new AppController(model, view);
+            controller = new AppController();
 
             // Connect controller with model
-            Controller.SubscribeToModelEvents();
+            controller.AttachModel(model);
             
             // Connect controller with view
-            Controller.SubscribeToViewEvents();
+            controller.AttachView(view);
         }
     }
 }

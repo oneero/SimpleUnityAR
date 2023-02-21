@@ -12,6 +12,7 @@
             <e p="App.cs" t="Include" />
             <e p="AppController.cs" t="Include" />
             <e p="AppModel.cs" t="Include" />
+            <e p="Events.cs" t="Include" />
             <e p="PositionObject.cs" t="Include" />
             <e p="UnityView.cs" t="Include" />
           </e>
