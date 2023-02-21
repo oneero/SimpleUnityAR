@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eb1b2a19-e9b0-44e5-a614-2d0592efc20a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SimpleUnityAR/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SimpleUnityAR/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SimpleUnityAR/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SimpleUnityAR/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/VisObject.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/VisObject.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/App/App.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/App/App.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/App/AppController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/App/AppController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/App/AppModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/App/AppModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/App/PositionObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/App/PositionObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/App/UnityView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/App/UnityView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +76,7 @@
       <workItem from="1676625451907" duration="5431000" />
       <workItem from="1676717963260" duration="20365000" />
       <workItem from="1676891109171" duration="3567000" />
-      <workItem from="1676919707613" duration="13351000" />
+      <workItem from="1676919707613" duration="13623000" />
     </task>
     <servers />
   </component>
